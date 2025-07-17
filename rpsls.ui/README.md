@@ -10,7 +10,7 @@ It is designed to work seamlessly with Docker and Docker Compose for easy setup.
 ### 1. **Clone the Repository**
 
 ```sh
-git clone https://github.com/yourusername/rpsls.git
+git clone https://github.com/djuka29/RPSLS.git
 cd rpsls
 ```
 
