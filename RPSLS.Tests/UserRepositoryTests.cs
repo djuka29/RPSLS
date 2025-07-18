@@ -15,10 +15,12 @@ namespace RPSLS.Tests
         [Fact]
         public void AddAndGetById_Works()
         {
+            var random = new Random().Next();
+            var username = $"testuser {random}";
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Username = "testuser",
+                Username = username,
                 HashedPassword = "hashedpw"
             };
 
@@ -27,21 +29,24 @@ namespace RPSLS.Tests
 
             Assert.NotNull(fetched);
             Assert.Equal(user.Id, fetched.Id);
-            Assert.Equal("testuser", fetched.Username);
+            Assert.Equal(username, fetched.Username);
             Assert.Equal("hashedpw", fetched.HashedPassword);
         }
 
         [Fact]
         public void GetAll_ReturnsAllUsers()
         {
-            var user1 = new User { Id = Guid.NewGuid(), Username = "user1", HashedPassword = "pw1" };
-            var user2 = new User { Id = Guid.NewGuid(), Username = "user2", HashedPassword = "pw2" };
+            var random = new Random().Next();
+            var username1 = $"testuser1 {random}";
+            var username2 = $"testuser2 {random}";
+            var user1 = new User { Id = Guid.NewGuid(), Username = username1, HashedPassword = "pw1" };
+            var user2 = new User { Id = Guid.NewGuid(), Username = username2, HashedPassword = "pw2" };
             _repo.Add(user1);
             _repo.Add(user2);
 
             var all = _repo.GetAll().ToList();
-            Assert.Contains(all, u => u.Username == "user1");
-            Assert.Contains(all, u => u.Username == "user2");
+            Assert.Contains(all, u => u.Username == username1);
+            Assert.Contains(all, u => u.Username == username2);
         }
     }
 }

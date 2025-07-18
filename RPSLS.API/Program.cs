@@ -14,8 +14,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<IRandomNumberService, RandomNumberService>();
 builder.Services.AddSingleton<IRPSLSGameService, RPSLSGameService>();
 builder.Services.AddSingleton<IUserRepository>(
-    new UserRepository("Data Source=users.db")
-); 
+    new UserRepository("Data Source=rpsls.db")
+);
+builder.Services.AddSingleton<IScoreboardRepository>(
+    new ScoreboardRepository("Data Source=rpsls.db")
+);
 
 builder.Services.AddCors(options =>
 {

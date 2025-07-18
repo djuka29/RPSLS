@@ -37,9 +37,9 @@ namespace RPSLS.API.Controllers
         }
 
         [HttpPost("play")]
-        public IActionResult Play([FromBody] PlayRequestDTO request)
+        public async Task<IActionResult> Play([FromBody] PlayRequestDTO request)
         {
-            var roundResult = _gameService.PlayRound(request.UserId, request.PlayerChoice);
+            var roundResult = await _gameService.PlayRoundAsync(request.UserId, request.PlayerChoice);
             return Ok(roundResult);
         }
 

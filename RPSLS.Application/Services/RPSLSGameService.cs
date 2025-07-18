@@ -8,18 +8,24 @@ namespace RPSLS.Application.Services;
 
 public class RPSLSGameService : IRPSLSGameService
 {
-    private readonly IRandomNumberService _randomNumberService;
+    private readonly IRandomNumberService _randomNumberService; 
+    private readonly IScoreboardRepository _scoreboardRepository;
+
     private readonly ConcurrentDictionary<Guid, Queue<RoundResult>> _scoreboards = new();
 
-    public RPSLSGameService(IRandomNumberService randomNumberService)
+    public RPSLSGameService(
+        IRandomNumberService randomNumberService, 
+        IScoreboardRepository scoreboardRepository)
     {
         _randomNumberService = randomNumberService;
+        _scoreboardRepository = scoreboardRepository;
+
     }
 
-    public RoundResult PlayRound(Guid userId, int playerChoiceId)
+    public async Task<RoundResult> PlayRoundAsync(Guid userId, int playerChoiceId)
     {
         var player = (Choice)playerChoiceId;
-        var rnd = _randomNumberService.GetRandomNumberAsync().Result;
+        var rnd = await _randomNumberService.GetRandomNumberAsync();
         var computer = (Choice)((rnd % 5) + 1);
 
         RoundResultType result;
@@ -37,26 +43,18 @@ public class RPSLSGameService : IRPSLSGameService
             Result = result
         };
 
-        var queue = _scoreboards.GetOrAdd(userId, _ => new Queue<RoundResult>());
-        lock (queue)
-        {
-            queue.Enqueue(roundResult);
-            if (queue.Count > 10) queue.Dequeue();
-        }
+        _scoreboardRepository.AddRoundResult(userId, roundResult);
 
         return roundResult;
     }
 
     public List<RoundResult> GetScoreboard(Guid userId)
     {
-        if (_scoreboards.TryGetValue(userId, out var queue))
-            return queue.ToList();
-
-        return [];
+        return _scoreboardRepository.GetScoreboard(userId);
     }
 
     public void ResetScoreboard(Guid userId)
     {
-        _scoreboards[userId] = new Queue<RoundResult>();
+        _scoreboardRepository.ResetScoreboard(userId);
     }
 }

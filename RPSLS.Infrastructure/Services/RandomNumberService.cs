@@ -15,12 +15,19 @@ namespace RPSLS.Infrastructure.Services
 
         public async Task<int> GetRandomNumberAsync()
         {
-            var response = await _httpClient.GetAsync(RandomApi);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.GetAsync(RandomApi);
+                response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(content);
-            return doc.RootElement.GetProperty("random_number").GetInt32();
+                var content = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(content);
+                return doc.RootElement.GetProperty("random_number").GetInt32();
+            }
+            catch (Exception)
+            {
+                return new Random().Next(1, 100);
+            }
         }
     }
 }
